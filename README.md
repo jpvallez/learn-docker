@@ -6,7 +6,7 @@ I want this Go code to run in a Docker container.
 
 Future upgrades?
 * [x] Another Docker container running a simple database to store results.
-* [ ] Do more stuff with Kubernetes?
+* [ ] Do stuff with Kubernetes?
 * [ ] Hook in to real API called API-FOOTBALL (paid)
 
 # How to?
