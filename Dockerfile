@@ -4,9 +4,7 @@ FROM golang:latest
 ADD . /go/src/learn-docker
 WORKDIR /go/src/learn-docker
 
-#RUN go get -v -t  .
 RUN set -x && \
-    #go get github.com/2tvenom/go-test-teamcity && \  
     go get github.com/golang/dep/cmd/dep && \
     dep ensure -v
 
