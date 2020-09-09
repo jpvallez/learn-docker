@@ -8,15 +8,9 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/jpvallez/learn-docker/datasources/apifootball"
 )
-
-type Player struct {
-	Name        string
-	SquadNumber int
-	Team        Team
-}
-
-type Team string
 
 func main() {
 	clientOptions := options.Client().ApplyURI("mongodb://db:27017")
@@ -33,25 +27,32 @@ func main() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Connected to MongoDB!")
+	fmt.Println("Connected to MongoDB!!!")
 
 	collection := client.Database("test").Collection("players")
 
-	// Let's put Danny Ings in the database
-	dannyIngs := Player{"Danny Ings", 10, "Southampton"}
+	var premierLeagueTeams []apifootball.Team
 
-	insertResult, err := collection.InsertOne(context.TODO(), dannyIngs)
+	premierLeagueTeams, err = apifootball.GetTeamsFromLeagueId("2", false)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Println("Inserted a document: ", insertResult.InsertedID)
+	// Let's try and stuff the teams one by one into mongodb
 
-	// Now let's get it back from the database and print it.
+	for _, team := range premierLeagueTeams {
+		insertResult, err := collection.InsertOne(context.TODO(), team)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Inserted a team, insert ID: ", insertResult.InsertedID)
+	}
 
-	filter := bson.M{"name": "Danny Ings"}
+	// Now for testing sake let's get a team back from the database and print it.
 
-	var result Player
+	filter := bson.M{"name": "Southampton"}
+
+	var result apifootball.Team
 
 	err = collection.FindOne(context.TODO(), filter).Decode(&result)
 	if err != nil {
